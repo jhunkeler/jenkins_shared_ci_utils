@@ -126,11 +126,11 @@ def scm_checkout(args = ['skip_disable':false]) {
             // Perform repo checkout, which for some reason clobbers everything
             // in the workspace. Then, create a project subdir, and move all
             // files into it. Then continue as usual.
-            checkout(scm)
             sh "mkdir clone"
-            stat = sh(script: "shopt -s dotglob; mv * clone", returnStatus: true)
+            // stat = sh(script: "shopt -s dotglob; mv * clone", returnStatus: true)
             println("args['skip_disable'] = ${args['skip_disable']}")
             dir('clone') {
+                checkout(scm)
                 if (args['skip_disable'] == false) {
                     // Obtain the last commit message and examine it for skip directives.
                     logoutput = sh(script:"git log -1 --pretty=%B", returnStdout: true).trim()
