@@ -496,9 +496,12 @@ def stageArtifactory(config) {
 
             // Construct absolute path to data
             println(artifact)
-            def path = FilenameUtils.getFullPath(
-                        "${env.WORKSPACE}/${artifact.root}"
-            )
+            def _p = "${env.WORKSPACE}/${artifact.root}"
+            if (!_p.endsWith("/")) {
+                _p = _p + "/"
+            }
+            def path = FilenameUtils.getFullPath(_p)
+
             println("getFullPath == ${path}")
             println("raw == ${env.WORKSPACE}/${artifact.root}")
 
