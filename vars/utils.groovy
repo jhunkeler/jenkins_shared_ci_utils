@@ -284,10 +284,12 @@ def pushToArtifactory(file_spec, repo) {
     data_config = new DataConfig()
     data_config.server_id = 'bytesalad'
 
+    /*
     def buildInfo = Artifactory.newBuildInfo()
     buildInfo.env.capture = true
     buildInfo.env.collect()
     def server = Artifactory.server data_config.server_id
+    */
 
 upload_spec = """
 {
@@ -301,9 +303,11 @@ upload_spec = """
 """
 
     data_config.insert('env_file', upload_spec)
+    /*
     def bi_temp = server.upload spec: data_config.data['env_file']
     buildInfo.append bi_temp
     server.publishBuildInfo buildInfo
+    */
 }
 
 
@@ -480,19 +484,23 @@ def processTestReport(config) {
 // @param config      BuildConfig object
 def stageArtifactory(config) {
     stage("Artifactory (${config.name})") {
-        def buildInfo = Artifactory.newBuildInfo()
+        sh("pwd")
+        //def buildInfo = Artifactory.newBuildInfo()
 
-        buildInfo.env.capture = true
-        buildInfo.env.collect()
+        //buildInfo.env.capture = true
+        //buildInfo.env.collect()
         def server
 
         for (artifact in config.test_configs) {
-            server = Artifactory.server artifact.server_id
+            //server = Artifactory.server artifact.server_id
 
             // Construct absolute path to data
+            println(artifact)
             def path = FilenameUtils.getFullPath(
                         "${env.WORKSPACE}/${artifact.root}"
             )
+            println("getFullPath == ${path}")
+            println("raw == ${env.WORKSPACE}/${artifact.root}")
 
             // Record listing of all files starting at ${path}
             // (Native Java and Groovy approaches will not
@@ -518,6 +526,7 @@ def stageArtifactory(config) {
             } // end find.each
 
             // Submit each request to the Artifactory server
+            /*
             artifact.data.each { blob ->
                 def bi_temp = server.upload spec: blob.value
 
@@ -530,10 +539,11 @@ def stageArtifactory(config) {
 
                 buildInfo.append bi_temp
             }
+            */
 
         } // end for-loop
 
-        server.publishBuildInfo buildInfo
+        //server.publishBuildInfo buildInfo
 
     } // end stage Artifactory
 }
